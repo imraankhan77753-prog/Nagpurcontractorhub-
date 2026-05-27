@@ -77,6 +77,7 @@
 
     .contractor-content h3{
       margin-bottom:10px;
+      color:#111827;
     }
 
     .contractor-content p{
@@ -92,6 +93,10 @@
       border-radius:8px;
       text-decoration:none;
       margin-top:10px;
+    }
+
+    .btn:hover{
+      background:#1d4ed8;
     }
 
     .form-section{
@@ -130,6 +135,7 @@
       color:white;
       border:none;
       cursor:pointer;
+      font-weight:bold;
     }
 
     button:hover{
@@ -142,6 +148,12 @@
       text-align:center;
       padding:20px;
       margin-top:40px;
+    }
+
+    .loading{
+      text-align:center;
+      padding:20px;
+      font-size:18px;
     }
   </style>
 </head>
@@ -165,6 +177,7 @@
 <h2 class="section-title">Contractor Profiles</h2>
 
 <section class="contractor-container" id="contractorContainer">
+  <div class="loading">Loading Profiles...</div>
 </section>
 
 <section class="form-section">
@@ -222,10 +235,10 @@ import {
 } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js';
 
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
+  apiKey: "AIzaSyBxgxjBHvy_bK-FUGNIKDCSnCWJ1iHIUlQ",
   authDomain: "nagpurcontractorhub.firebaseapp.com",
   projectId: "nagpurcontractorhub",
-  storageBucket: "nagpurcontractorhub.appspot.com",
+  storageBucket: "nagpurcontractorhub.firebasestorage.app",
   messagingSenderId: "1052028667438",
   appId: "1:1052028667438:web:cf35c73eb8c26ef1aa81bf"
 };
@@ -247,6 +260,15 @@ async function loadContractors(){
   contractorContainer.innerHTML = '';
 
   const querySnapshot = await getDocs(collection(db, 'contractors'));
+
+  if(querySnapshot.empty){
+    contractorContainer.innerHTML = `
+      <div class="loading">
+        No Contractor Profiles Yet
+      </div>
+    `;
+    return;
+  }
 
   querySnapshot.forEach((doc) => {
 
@@ -289,41 +311,60 @@ contractorForm.addEventListener('submit', async (e) => {
 
   e.preventDefault();
 
-  const name = document.getElementById('name').value;
+  try{
 
-  const business = document.getElementById('business').value;
+    const name = document.getElementById('name').value;
 
-  const phone = document.getElementById('phone').value;
+    const business = document.getElementById('business').value;
 
-  const location = document.getElementById('location').value;
+    const phone = document.getElementById('phone').value;
 
-  const service = document.getElementById('service').value;
+    const location = document.getElementById('location').value;
 
-  const description = document.getElementById('description').value;
+    const service = document.getElementById('service').value;
 
-  const imageFile = document.getElementById('image').files[0];
+    const description = document.getElementById('description').value;
 
-  const storageRef = ref(storage, 'contractors/' + imageFile.name);
+    const imageFile = document.getElementById('image').files[0];
 
-  await uploadBytes(storageRef, imageFile);
+    if(!imageFile){
+      alert('Please Select Image');
+      return;
+    }
 
-  const imageUrl = await getDownloadURL(storageRef);
+    const storageRef = ref(
+      storage,
+      'contractors/' + Date.now() + imageFile.name
+    );
 
-  await addDoc(collection(db, 'contractors'), {
-    name,
-    business,
-    phone,
-    location,
-    service,
-    description,
-    imageUrl
-  });
+    await uploadBytes(storageRef, imageFile);
 
-  alert('Profile Uploaded Successfully');
+    const imageUrl = await getDownloadURL(storageRef);
 
-  contractorForm.reset();
+    await addDoc(collection(db, 'contractors'), {
+      name,
+      business,
+      phone,
+      location,
+      service,
+      description,
+      imageUrl,
+      createdAt: new Date()
+    });
 
-  loadContractors();
+    alert('Profile Uploaded Successfully');
+
+    contractorForm.reset();
+
+    loadContractors();
+
+  } catch(error){
+
+    console.error(error);
+
+    alert('Error Uploading Profile');
+
+  }
 
 });
 
