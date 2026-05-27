@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Nagpur Contractor Hub</title>
+
+  <style>
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+      font-family:Arial,sans-serif;
+    }
+
+    body{
+      background:#f3f4f6;
+      color:#111827;
+    }
+
+    header{
+      background:#111827;
+      color:white;
+      text-align:center;
+      padding:25px;
+    }
+
+    header h1{
+      font-size:38px;
+      margin-bottom:10px;
+    }
+
+    .search-section{
+      background:white;
+      padding:25px;
+      text-align:center;
+    }
+
+    .search-box{
+      width:90%;
+      max-width:600px;
+      padding:14px;
+      border-radius:10px;
+      border:1px solid #ccc;
+      font-size:16px;
+    }
+
+    .section-title{
+      text-align:center;
+      margin:30px 0 10px;
+      font-size:30px;
+    }
+
+    .contractor-container{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+      gap:20px;
+      padding:20px;
+    }
+
+    .contractor-card{
+      background:white;
+      border-radius:15px;
+      overflow:hidden;
+      box-shadow:0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    .contractor-card img{
+      width:100%;
+      height:220px;
+      object-fit:cover;
+    }
+
+    .contractor-content{
+      padding:15px;
+    }
+
+    .contractor-content h3{
+      margin-bottom:10px;
+    }
+
+    .contractor-content p{
+      margin-bottom:8px;
+      color:#555;
+    }
+
+    .btn{
+      display:inline-block;
+      background:#2563eb;
+      color:white;
+      padding:10px 16px;
+      border-radius:8px;
+      text-decoration:none;
+      margin-top:10px;
+    }
+
+    .form-section{
+      background:white;
+      width:90%;
+      max-width:700px;
+      margin:40px auto;
+      padding:30px;
+      border-radius:15px;
+      box-shadow:0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    form{
+      display:flex;
+      flex-direction:column;
+      gap:15px;
+    }
+
+    input,
+    textarea,
+    select,
+    button{
+      padding:14px;
+      border-radius:10px;
+      font-size:15px;
+    }
+
+    input,
+    textarea,
+    select{
+      border:1px solid #ccc;
+    }
+
+    button{
+      background:#111827;
+      color:white;
+      border:none;
+      cursor:pointer;
+    }
+
+    button:hover{
+      background:#2563eb;
+    }
+
+    footer{
+      background:#111827;
+      color:white;
+      text-align:center;
+      padding:20px;
+      margin-top:40px;
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <h1>Nagpur Contractor Hub</h1>
+  <p>Find Best Contractors in Nagpur</p>
+</header>
+
+<section class="search-section">
+  <input 
+    type="text" 
+    class="search-box" 
+    id="searchInput" 
+    placeholder="Search Contractors or Services..."
+  >
+</section>
+
+<h2 class="section-title">Contractor Profiles</h2>
+
+<section class="contractor-container" id="contractorContainer">
+</section>
+
+<section class="form-section">
+
+  <h2>Create Contractor Profile</h2>
+
+  <form id="contractorForm">
+
+    <input type="text" id="name" placeholder="Contractor Name" required>
+
+    <input type="text" id="business" placeholder="Business Name" required>
+
+    <input type="tel" id="phone" placeholder="Phone Number" required>
+
+    <input type="text" id="location" placeholder="Location" required>
+
+    <select id="service" required>
+      <option value="">Select Service</option>
+      <option>False Ceiling</option>
+      <option>POP Work</option>
+      <option>Interior Design</option>
+      <option>PVC Ceiling</option>
+      <option>Painting</option>
+    </select>
+
+    <textarea id="description" placeholder="Write About Your Service"></textarea>
+
+    <input type="file" id="image" accept="image/*" required>
+
+    <button type="submit">Upload Profile</button>
+
+  </form>
+</section>
+
+<footer>
+  <p>© 2026 Nagpur Contractor Hub</p>
+</footer>
+
+<script type="module">
+
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  getDocs
+} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+
+import {
+  getStorage,
+  ref,
+  uploadBytes,
+  getDownloadURL
+} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js';
+
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "nagpurcontractorhub.firebaseapp.com",
+  projectId: "nagpurcontractorhub",
+  storageBucket: "nagpurcontractorhub.appspot.com",
+  messagingSenderId: "1052028667438",
+  appId: "1:1052028667438:web:cf35c73eb8c26ef1aa81bf"
+};
+
+const app = initializeApp(firebaseConfig);
+
+const db = getFirestore(app);
+
+const storage = getStorage(app);
+
+const contractorForm = document.getElementById('contractorForm');
+
+const contractorContainer = document.getElementById('contractorContainer');
+
+const searchInput = document.getElementById('searchInput');
+
+async function loadContractors(){
+
+  contractorContainer.innerHTML = '';
+
+  const querySnapshot = await getDocs(collection(db, 'contractors'));
+
+  querySnapshot.forEach((doc) => {
+
+    const data = doc.data();
+
+    contractorContainer.innerHTML += `
+
+      <div class="contractor-card">
+
+        <img src="${data.imageUrl}" alt="Contractor">
+
+        <div class="contractor-content">
+
+          <h3>${data.business}</h3>
+
+          <p><strong>Name:</strong> ${data.name}</p>
+
+          <p><strong>Service:</strong> ${data.service}</p>
+
+          <p><strong>Location:</strong> ${data.location}</p>
+
+          <p><strong>Phone:</strong> ${data.phone}</p>
+
+          <p>${data.description}</p>
+
+          <a href="tel:${data.phone}" class="btn">
+            Call Now
+          </a>
+
+        </div>
+
+      </div>
+
+    `;
+  });
+
+}
+
+contractorForm.addEventListener('submit', async (e) => {
+
+  e.preventDefault();
+
+  const name = document.getElementById('name').value;
+
+  const business = document.getElementById('business').value;
+
+  const phone = document.getElementById('phone').value;
+
+  const location = document.getElementById('location').value;
+
+  const service = document.getElementById('service').value;
+
+  const description = document.getElementById('description').value;
+
+  const imageFile = document.getElementById('image').files[0];
+
+  const storageRef = ref(storage, 'contractors/' + imageFile.name);
+
+  await uploadBytes(storageRef, imageFile);
+
+  const imageUrl = await getDownloadURL(storageRef);
+
+  await addDoc(collection(db, 'contractors'), {
+    name,
+    business,
+    phone,
+    location,
+    service,
+    description,
+    imageUrl
+  });
+
+  alert('Profile Uploaded Successfully');
+
+  contractorForm.reset();
+
+  loadContractors();
+
+});
+
+searchInput.addEventListener('keyup', () => {
+
+  const filter = searchInput.value.toLowerCase();
+
+  const cards = document.querySelectorAll('.contractor-card');
+
+  cards.forEach(card => {
+
+    const text = card.innerText.toLowerCase();
+
+    if(text.includes(filter)){
+      card.style.display = 'block';
+    } else {
+      card.style.display = 'none';
+    }
+
+  });
+
+});
+
+loadContractors();
+
+</script>
+
+</body>
+</html>
