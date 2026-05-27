@@ -1,395 +1,231 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Nagpur Contractor Hub</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Nagpur Contractor Hub</title>
 
-  <style>
-    *{
-      margin:0;
-      padding:0;
-      box-sizing:border-box;
-      font-family:Arial,sans-serif;
-    }
+<style>
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:Arial,sans-serif;
+}
 
-    body{
-      background:#f3f4f6;
-      color:#111827;
-    }
+body{
+  background:#f3f4f6;
+}
 
-    header{
-      background:#111827;
-      color:white;
-      text-align:center;
-      padding:25px;
-    }
+header{
+  background:#111827;
+  color:#fff;
+  text-align:center;
+  padding:20px;
+}
 
-    header h1{
-      font-size:38px;
-      margin-bottom:10px;
-    }
+.search-section{
+  background:#fff;
+  padding:20px;
+  text-align:center;
+}
 
-    .search-section{
-      background:white;
-      padding:25px;
-      text-align:center;
-    }
+.search-box{
+  width:90%;
+  max-width:600px;
+  padding:12px;
+  border:1px solid #ccc;
+  border-radius:8px;
+}
 
-    .search-box{
-      width:90%;
-      max-width:600px;
-      padding:14px;
-      border-radius:10px;
-      border:1px solid #ccc;
-      font-size:16px;
-    }
+.section-title{
+  text-align:center;
+  margin:20px;
+}
 
-    .section-title{
-      text-align:center;
-      margin:30px 0 10px;
-      font-size:30px;
-    }
+.container{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+  gap:15px;
+  padding:15px;
+}
 
-    .contractor-container{
-      display:grid;
-      grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
-      gap:20px;
-      padding:20px;
-    }
+.card{
+  background:#fff;
+  border-radius:12px;
+  padding:15px;
+  box-shadow:0 3px 10px rgba(0,0,0,0.1);
+}
 
-    .contractor-card{
-      background:white;
-      border-radius:15px;
-      overflow:hidden;
-      box-shadow:0 4px 10px rgba(0,0,0,0.1);
-    }
+.card h3{
+  margin-bottom:8px;
+}
 
-    .contractor-card img{
-      width:100%;
-      height:220px;
-      object-fit:cover;
-    }
+.btn{
+  display:inline-block;
+  margin-top:10px;
+  padding:8px 12px;
+  background:#2563eb;
+  color:#fff;
+  border-radius:6px;
+  text-decoration:none;
+}
 
-    .contractor-content{
-      padding:15px;
-    }
+.form{
+  background:#fff;
+  max-width:600px;
+  margin:20px auto;
+  padding:20px;
+  border-radius:12px;
+}
 
-    .contractor-content h3{
-      margin-bottom:10px;
-      color:#111827;
-    }
+input,select,textarea{
+  width:100%;
+  margin:8px 0;
+  padding:12px;
+  border:1px solid #ccc;
+  border-radius:8px;
+}
 
-    .contractor-content p{
-      margin-bottom:8px;
-      color:#555;
-    }
+button{
+  width:100%;
+  padding:12px;
+  background:#111827;
+  color:#fff;
+  border:none;
+  border-radius:8px;
+  cursor:pointer;
+}
 
-    .btn{
-      display:inline-block;
-      background:#2563eb;
-      color:white;
-      padding:10px 16px;
-      border-radius:8px;
-      text-decoration:none;
-      margin-top:10px;
-    }
-
-    .btn:hover{
-      background:#1d4ed8;
-    }
-
-    .form-section{
-      background:white;
-      width:90%;
-      max-width:700px;
-      margin:40px auto;
-      padding:30px;
-      border-radius:15px;
-      box-shadow:0 4px 10px rgba(0,0,0,0.1);
-    }
-
-    form{
-      display:flex;
-      flex-direction:column;
-      gap:15px;
-    }
-
-    input,
-    textarea,
-    select,
-    button{
-      padding:14px;
-      border-radius:10px;
-      font-size:15px;
-    }
-
-    input,
-    textarea,
-    select{
-      border:1px solid #ccc;
-    }
-
-    button{
-      background:#111827;
-      color:white;
-      border:none;
-      cursor:pointer;
-      font-weight:bold;
-    }
-
-    button:hover{
-      background:#2563eb;
-    }
-
-    footer{
-      background:#111827;
-      color:white;
-      text-align:center;
-      padding:20px;
-      margin-top:40px;
-    }
-
-    .loading{
-      text-align:center;
-      padding:20px;
-      font-size:18px;
-    }
-  </style>
+.featured{
+  border:2px solid gold;
+}
+</style>
 </head>
 
 <body>
 
 <header>
-  <h1>Nagpur Contractor Hub</h1>
-  <p>Find Best Contractors in Nagpur</p>
+<h1>Nagpur Contractor Hub</h1>
+<p>Find Contractors Easily</p>
 </header>
 
 <section class="search-section">
-  <input 
-    type="text" 
-    class="search-box" 
-    id="searchInput" 
-    placeholder="Search Contractors or Services..."
-  >
+<input id="search" class="search-box" placeholder="Search contractor...">
 </section>
 
 <h2 class="section-title">Contractor Profiles</h2>
+<div class="container" id="list"></div>
 
-<section class="contractor-container" id="contractorContainer">
-  <div class="loading">Loading Profiles...</div>
-</section>
+<div class="form">
+<h2>Add Profile</h2>
 
-<section class="form-section">
+<input id="name" placeholder="Name">
+<input id="business" placeholder="Business Name">
+<input id="phone" placeholder="Phone">
+<input id="location" placeholder="Location">
 
-  <h2>Create Contractor Profile</h2>
+<select id="service">
+<option value="">Select Service</option>
+<option>False Ceiling</option>
+<option>POP Work</option>
+<option>Interior Design</option>
+<option>Painting</option>
+</select>
 
-  <form id="contractorForm">
+<textarea id="desc" placeholder="Description"></textarea>
 
-    <input type="text" id="name" placeholder="Contractor Name" required>
+<label>
+<input type="checkbox" id="featured"> Mark as Featured (Top)
+</label>
 
-    <input type="text" id="business" placeholder="Business Name" required>
-
-    <input type="tel" id="phone" placeholder="Phone Number" required>
-
-    <input type="text" id="location" placeholder="Location" required>
-
-    <select id="service" required>
-      <option value="">Select Service</option>
-      <option>False Ceiling</option>
-      <option>POP Work</option>
-      <option>Interior Design</option>
-      <option>PVC Ceiling</option>
-      <option>Painting</option>
-    </select>
-
-    <textarea id="description" placeholder="Write About Your Service"></textarea>
-
-    <input type="file" id="image" accept="image/*" required>
-
-    <button type="submit">Upload Profile</button>
-
-  </form>
-</section>
-
-<footer>
-  <p>© 2026 Nagpur Contractor Hub</p>
-</footer>
+<button onclick="addProfile()">Submit</button>
+</div>
 
 <script type="module">
-
-import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
-
-import {
-  getFirestore,
-  collection,
-  addDoc,
-  getDocs
-} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
-
-import {
-  getStorage,
-  ref,
-  uploadBytes,
-  getDownloadURL
-} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js';
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyBxgxjBHvy_bK-FUGNIKDCSnCWJ1iHIUlQ",
-  authDomain: "nagpurcontractorhub.firebaseapp.com",
-  projectId: "nagpurcontractorhub",
-  storageBucket: "nagpurcontractorhub.firebasestorage.app",
-  messagingSenderId: "1052028667438",
-  appId: "1:1052028667438:web:cf35c73eb8c26ef1aa81bf"
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_DOMAIN",
+  projectId: "YOUR_PROJECT_ID",
+  appId: "YOUR_APP_ID"
 };
 
 const app = initializeApp(firebaseConfig);
-
 const db = getFirestore(app);
 
-const storage = getStorage(app);
+const list = document.getElementById("list");
 
-const contractorForm = document.getElementById('contractorForm');
+async function load(){
+  list.innerHTML = "";
 
-const contractorContainer = document.getElementById('contractorContainer');
+  const snap = await getDocs(collection(db,"contractors"));
 
-const searchInput = document.getElementById('searchInput');
+  let data = [];
 
-async function loadContractors(){
+  snap.forEach(doc=>{
+    data.push(doc.data());
+  });
 
-  contractorContainer.innerHTML = '';
+  // FEATURED TOP
+  data.sort((a,b)=>(b.featured||false)-(a.featured||false));
 
-  const querySnapshot = await getDocs(collection(db, 'contractors'));
+  data.forEach(d=>{
+    list.innerHTML += `
+      <div class="card ${d.featured ? 'featured' : ''}">
+        <h3>${d.business}</h3>
+        <p><b>Name:</b> ${d.name}</p>
+        <p><b>Service:</b> ${d.service}</p>
+        <p><b>Location:</b> ${d.location}</p>
+        <p><b>Phone:</b> ${d.phone}</p>
+        <p>${d.desc}</p>
 
-  if(querySnapshot.empty){
-    contractorContainer.innerHTML = `
-      <div class="loading">
-        No Contractor Profiles Yet
+        <a class="btn" href="tel:${d.phone}">Call Now</a>
       </div>
     `;
+  });
+}
+
+window.addProfile = async function(){
+
+  const name = document.getElementById("name").value;
+  const business = document.getElementById("business").value;
+  const phone = document.getElementById("phone").value;
+  const location = document.getElementById("location").value;
+  const service = document.getElementById("service").value;
+  const desc = document.getElementById("desc").value;
+  const featured = document.getElementById("featured").checked;
+
+  if(!name || !business || !phone){
+    alert("Fill all required fields");
     return;
   }
 
-  querySnapshot.forEach((doc) => {
-
-    const data = doc.data();
-
-    contractorContainer.innerHTML += `
-
-      <div class="contractor-card">
-
-        <img src="${data.imageUrl}" alt="Contractor">
-
-        <div class="contractor-content">
-
-          <h3>${data.business}</h3>
-
-          <p><strong>Name:</strong> ${data.name}</p>
-
-          <p><strong>Service:</strong> ${data.service}</p>
-
-          <p><strong>Location:</strong> ${data.location}</p>
-
-          <p><strong>Phone:</strong> ${data.phone}</p>
-
-          <p>${data.description}</p>
-
-          <a href="tel:${data.phone}" class="btn">
-            Call Now
-          </a>
-
-        </div>
-
-      </div>
-
-    `;
+  await addDoc(collection(db,"contractors"),{
+    name,
+    business,
+    phone,
+    location,
+    service,
+    desc,
+    featured
   });
 
+  alert("Profile Added");
+
+  load();
 }
 
-contractorForm.addEventListener('submit', async (e) => {
-
-  e.preventDefault();
-
-  try{
-
-    const name = document.getElementById('name').value;
-
-    const business = document.getElementById('business').value;
-
-    const phone = document.getElementById('phone').value;
-
-    const location = document.getElementById('location').value;
-
-    const service = document.getElementById('service').value;
-
-    const description = document.getElementById('description').value;
-
-    const imageFile = document.getElementById('image').files[0];
-
-    if(!imageFile){
-      alert('Please Select Image');
-      return;
-    }
-
-    const storageRef = ref(
-      storage,
-      'contractors/' + Date.now() + imageFile.name
-    );
-
-    await uploadBytes(storageRef, imageFile);
-
-    const imageUrl = await getDownloadURL(storageRef);
-
-    await addDoc(collection(db, 'contractors'), {
-      name,
-      business,
-      phone,
-      location,
-      service,
-      description,
-      imageUrl,
-      createdAt: new Date()
-    });
-
-    alert('Profile Uploaded Successfully');
-
-    contractorForm.reset();
-
-    loadContractors();
-
-  } catch(error){
-
-    console.error(error);
-
-    alert('Error Uploading Profile');
-
-  }
-
-});
-
-searchInput.addEventListener('keyup', () => {
-
-  const filter = searchInput.value.toLowerCase();
-
-  const cards = document.querySelectorAll('.contractor-card');
-
-  cards.forEach(card => {
-
-    const text = card.innerText.toLowerCase();
-
-    if(text.includes(filter)){
-      card.style.display = 'block';
-    } else {
-      card.style.display = 'none';
-    }
-
+document.getElementById("search").addEventListener("input",(e)=>{
+  let val = e.target.value.toLowerCase();
+  document.querySelectorAll(".card").forEach(card=>{
+    card.style.display = card.innerText.toLowerCase().includes(val) ? "block" : "none";
   });
-
 });
 
-loadContractors();
-
+load();
 </script>
 
 </body>
